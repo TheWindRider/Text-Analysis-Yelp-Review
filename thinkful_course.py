@@ -1,3 +1,4 @@
+"""
 # Code Flow
 
 actors = {
@@ -65,3 +66,33 @@ with open('SQLite Data/EarthInstitute/thinkful_analysis.csv', 'w') as output_fil
     output_file.write('continent,ppl_change_2100_2010,ppl_density_2010\n')
     for continent, info in continent_wiki.iteritems():
         output_file.write(continent + ',' + str((info[1] - info[0])/float(info[0])) + ',' + str(info[0]/float(info[2])) + '\n')
+"""
+# SQLite 
+import sqlite3 as lite
+import pandas as pd
+
+month_list = ['January', 'Feburary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+month = raw_input("Warmest month: ")
+while month not in ('January', 'Feburary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'):
+    print  '{0} is not a valid month. Input be one of {1}'.format(month, month_list)
+    month = raw_input("Warmest month: ")
+
+con = lite.connect('SQLite Data/toy_data.sqlite')
+with con: 
+    cur = con.cursor()
+    cur.execute("select name, state from cities join weather on name = city where warm_month = '%s'" % month)
+    rows = cur.fetchall()
+    cols = [desc[0] for desc in cur.description]
+    df = pd.DataFrame(rows, columns = cols)
+    
+    if len(df) == 0: 
+        message = 'No cities are warmest in %s' % month
+    else: 
+        message = 'The cities that are warmest in %s are: ' % month
+        for index, each_row in df.iterrows():
+            message += each_row['name'] + ',' + each_row['state']
+            if index == len(df) - 1: 
+                message += '.'
+            else: 
+                message += '; '
+print message
