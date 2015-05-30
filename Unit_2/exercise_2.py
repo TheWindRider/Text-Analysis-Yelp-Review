@@ -15,7 +15,7 @@ plt.close()
 stats.probplot(x, dist = 'norm', plot = plt)
 plt.savefig('qq.png')
 plt.close()
-"""
+
 # univariate - lending
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -34,3 +34,18 @@ plt.savefig('loan_hist.png')
 plt.close()
 stats.probplot(loansData['Amount.Requested'], dist="norm", plot=plt)
 plt.savefig('loan_qq.png')
+"""
+# chi-square test
+from scipy import stats
+import pandas as pd
+import collections
+
+loansData = pd.read_csv('https://spark-public.s3.amazonaws.com/dataanalysis/loansData.csv')
+loansData.dropna(inplace=True)
+
+freq = collections.Counter(loansData['Open.CREDIT.Lines'])
+chi, p = stats.chisquare(freq.values())
+if p < 0.05: 
+    print "Null hypothesis rejected, not even distribution"
+else: 
+    print "Cannot reject the null hypotheis on an even distribution"
