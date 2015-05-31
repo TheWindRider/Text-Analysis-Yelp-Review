@@ -49,7 +49,7 @@ if p < 0.05:
     print "Null hypothesis rejected, not even distribution"
 else: 
     print "Cannot reject the null hypotheis on an even distribution"
-"""
+
 # Linear Regression
 import numpy as np
 import pandas as pd
@@ -62,6 +62,7 @@ loansData.dropna(inplace=True)
 loansData['Interest.Rate'] = loansData['Interest.Rate'].apply(lambda x: float(x.rstrip('%'))/100)
 loansData['Loan.Length'] = loansData['Loan.Length'].apply(lambda x: int(x.split(' ')[0]))
 loansData['FICO.Score'] = loansData['FICO.Range'].apply(lambda x: int(x.split('-')[0]))
+loansData.to_csv('Documents/Thinkful Project/thinkful course/Unit_2/loansData_clean.csv', header=True, index=False)
 
 pd.scatter_matrix(loansData, alpha=0.05, figsize=(10,10), diagonal='hist')
 plt.show()
@@ -77,3 +78,28 @@ exp_both = np.column_stack([exp_1, exp_2])
 exp_var = sm.add_constant(exp_both)
 model = sm.OLS(dep_var, exp_var)
 print model.fit().summary()
+"""
+# Logistics Regression
+import pandas as pd
+import statsmodels.api as sm
+import math
+
+def logistics_function (input_value, coeff_value): 
+    p = 1/(1 + math.exp(-coeff_value.dot(input_value)))
+    if p < 0.3: 
+        print 'Grant ${0} loan with interest rate of {1}%'.format(loanamt, int(threshold * 100))
+    else: 
+        print 'Reject ${0} loan with interest rate of {1}%'.format(loanamt, int(threshold * 100))
+    return p
+
+threshold = 0.12
+loanamt = 10000
+fico = 720
+loansData = pd.read_csv('Documents/Thinkful Project/thinkful course/Unit_2/loansData_clean.csv')
+loansData['Interest.Rate.Ishigh'] = loansData['Interest.Rate'] >= threshold
+loansData['Constant.Intercept'] = 1
+explain_vars = ['Amount.Requested', 'FICO.Score', 'Constant.Intercept']
+
+logit = sm.Logit(loansData['Interest.Rate.Ishigh'], loansData[explain_vars])
+coeff = logit.fit().params
+p_value = logistics_function([loanamt, fico, 1], coeff)
