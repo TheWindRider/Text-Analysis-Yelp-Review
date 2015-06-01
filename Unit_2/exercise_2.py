@@ -78,7 +78,7 @@ exp_both = np.column_stack([exp_1, exp_2])
 exp_var = sm.add_constant(exp_both)
 model = sm.OLS(dep_var, exp_var)
 print model.fit().summary()
-"""
+
 # Logistics Regression
 import pandas as pd
 import statsmodels.api as sm
@@ -103,3 +103,36 @@ explain_vars = ['Amount.Requested', 'FICO.Score', 'Constant.Intercept']
 logit = sm.Logit(loansData['Interest.Rate.Ishigh'], loansData[explain_vars])
 coeff = logit.fit().params
 p_value = logistics_function([loanamt, fico, 1], coeff)
+"""
+# Multivariate Analysis
+import pandas as pd
+import numpy as np
+import statsmodels.formula.api as smf
+from IPython.core.display import HTML
+
+def short_summary(est):
+    return HTML(est.summary().tables[1].as_html())
+
+loansData = pd.read_csv('SQLite Data/LoanStats3b.csv')
+loansData = loansData[['int_rate', 'annual_inc', 'home_ownership']]
+loansData.dropna(inplace=True)
+loansData.to_csv('Documents/Thinkful Project/thinkful course/Unit_2/LoanStats3b_clean.csv', header=True, index=False)
+
+loansData['int_rate'] = loansData['int_rate'].apply(lambda x: float(str(x).rstrip('%'))/100)
+loansData['log_annual_inc'] = np.log1p(loansData.annual_inc)
+loansData['home_is_own'] = loansData['home_ownership'] == 'OWN'
+loansData['home_is_rent'] = loansData['home_ownership'] == 'RENT'
+loansData['home_is_mortgage'] = loansData['home_ownership'] == 'MORTGAGE'
+
+model_1 = smf.ols(formula = 'int_rate ~ 1 + log_annual_inc', data = loansData).fit()
+print "Model_1 R Squared: {0}".format(model_1.rsquared)
+print model_1.summary().tables[1]
+model_2 = smf.ols(formula = 'int_rate ~ 1 + log_annual_inc + C(home_ownership)', data = loansData).fit()
+print "Model_2 R Squared: {0}".format(model_2.rsquared)
+print model_2.summary().tables[1]
+model_3 = smf.ols(formula = 'int_rate ~ 1 + log_annual_inc * C(home_ownership)', data = loansData).fit()
+print "Model_3 R Squared: {0}".format(model_3.rsquared)
+print model_3.summary().tables[1]
+model_4 = smf.ols(formula = 'int_rate ~ 1 + (home_is_own + home_is_rent + home_is_mortgage) * log_annual_inc', data = loansData).fit()
+print "Model_4 R Squared: {0}".format(model_4.rsquared)
+print model_4.summary().tables[1]
