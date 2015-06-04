@@ -103,7 +103,7 @@ explain_vars = ['Amount.Requested', 'FICO.Score', 'Constant.Intercept']
 logit = sm.Logit(loansData['Interest.Rate.Ishigh'], loansData[explain_vars])
 coeff = logit.fit().params
 p_value = logistics_function([loanamt, fico, 1], coeff)
-"""
+
 # Multivariate Analysis
 import pandas as pd
 import numpy as np
@@ -136,3 +136,21 @@ print model_3.summary().tables[1]
 model_4 = smf.ols(formula = 'int_rate ~ 1 + (home_is_own + home_is_rent + home_is_mortgage) * log_annual_inc', data = loansData).fit()
 print "Model_4 R Squared: {0}".format(model_4.rsquared)
 print model_4.summary().tables[1]
+"""
+# Time Series
+import pandas as pd
+import statsmodels.api as sapi
+
+loansData = pd.read_csv('SQLite Data/LoanStats3b.csv', low_memory = False)
+loansData['issue_d_format'] = pd.to_datetime(loansData['issue_d']) 
+dfts = loansData.set_index('issue_d_format')
+year_month_summary = dfts.groupby(lambda x : x.year * 100 + x.month).count()
+loan_count_summary = year_month_summary['issue_d']
+loan_count_series = pd.Series()
+for i in loan_count_summary.index: 
+    if i+1 in loan_count_summary.index: 
+        loan_count_series[i+1] = loan_count_summary[i+1] - loan_count_summary[i]
+sapi.graphics.tsa.plot_acf(loan_count_series)
+sapi.graphics.tsa.plot_pacf(loan_count_series)
+
+print "There is and is only lag-1 autocorrelation after 1 degree of differencing"
