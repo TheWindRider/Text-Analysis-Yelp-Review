@@ -1,5 +1,5 @@
 """
-# univariate - toy data
+# Univariate - toy data
 import os
 import matplotlib.pyplot as plt
 import scipy.stats as stats
@@ -16,7 +16,7 @@ stats.probplot(x, dist = 'norm', plot = plt)
 plt.savefig('qq.png')
 plt.close()
 
-# univariate - lending
+# Univariate - lending
 import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats as stats
@@ -35,7 +35,7 @@ plt.close()
 stats.probplot(loansData['Amount.Requested'], dist="norm", plot=plt)
 plt.savefig('loan_qq.png')
 
-# chi-square test
+# Chi-Squared Test
 from scipy import stats
 import pandas as pd
 import collections
@@ -136,7 +136,7 @@ print model_3.summary().tables[1]
 model_4 = smf.ols(formula = 'int_rate ~ 1 + (home_is_own + home_is_rent + home_is_mortgage) * log_annual_inc', data = loansData).fit()
 print "Model_4 R Squared: {0}".format(model_4.rsquared)
 print model_4.summary().tables[1]
-"""
+
 # Time Series
 import pandas as pd
 import statsmodels.api as sapi
@@ -154,3 +154,24 @@ sapi.graphics.tsa.plot_acf(loan_count_series)
 sapi.graphics.tsa.plot_pacf(loan_count_series)
 
 print "There is and is only lag-1 autocorrelation after 1 degree of differencing"
+"""
+# Markov Chain
+import pandas as pd
+stock = pd.DataFrame({'bull': [.9, .15, .25], 'bear': [.075, .8, .25], 'stag': [.025, .05, .5]},
+index=["bull", "bear", "stag"])
+stock = stock[['bull', 'bear', 'stag']]
+curr_stock = [stock]
+trans = 1
+cnt = True
+while trans < 50 and cnt: 
+    curr_stock.append(curr_stock[trans - 1].dot(stock))
+    trans += 1
+    if trans in [2, 5, 10]: 
+        print "probability after %d transitions:" % trans
+        print curr_stock[trans - 1]
+    for i,j in [(i,j) for i in ['bull', 'bear', 'stag'] for j in ['bull', 'bear', 'stag']]: 
+        if abs(curr_stock[trans-1][i][j] - curr_stock[trans-2][i][j]) > 0.0001: 
+            break
+        cnt = False
+print "steady after %d transitions:" % trans
+print curr_stock[-1]
