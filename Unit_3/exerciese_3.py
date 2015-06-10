@@ -1,9 +1,9 @@
 # New Yorkers Bike
 import time
+import requests
 from dateutil.parser import parse
 import collections
 import sqlite3 as lite
-import requests
 
 con = lite.connect('SQLite Data\citi_bike.sqlite')
 cur = con.cursor()
