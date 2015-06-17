@@ -26,7 +26,7 @@ for i in range(60):
 
     time.sleep(60)
 con.close()
-"""
+
 # Weather
 import time
 import datetime
@@ -74,3 +74,47 @@ with con:
             daily_max = raw_data.json()['daily']['data'][0]['temperatureMax']
             sql_insert = "INSERT INTO temperature (unix_time, city_name, daily_max) VALUES (?,?,?)"
             cur.execute(sql_insert, (unix_curr, k, daily_max))
+"""
+# Worldwide Education
+from bs4 import BeautifulSoup
+import requests
+import pandas
+import matplotlib.pyplot as plt
+
+url = "http://web.archive.org/web/20110514112442/http://unstats.un.org/unsd/demographic/products/socind/education.htm"
+raw_data = requests.get(url)
+soup_data = BeautifulSoup(raw_data.content)
+soup_tag = soup_data('table')[6].tr.td
+soup_table = soup_tag('table')[1].tr.td.div
+raw_table = soup_table('table')[0]
+
+col_name = []
+for child in raw_table('tr'): 
+    if child.get('class', ['Null'])[0] == 'lheader': 
+        for td in child.find_all('td'): 
+            if td.get_text() != '': 
+                col_name.append(td.get_text())
+        break
+country_table = pandas.DataFrame(columns = col_name)     
+
+row_num = 0
+for child in raw_table('tr'):
+    row_curr = []
+    if child.get('class', ['Null']) == 'tcont':
+        row_curr.append(child.find('td').get_text())
+        for td in child.find_all('td')[1:]: 
+            if td.get('align'): 
+                row_curr.append(td.get_text())
+    else: 
+        row_curr.append(child.find('td').get_text())
+        for td in child.find_all('td')[1:]:
+            if td.get('align'): 
+                row_curr.append(td.get_text())
+    if len(row_curr) == len(col_name): 
+        country_table.loc[row_num] = row_curr
+        row_num += 1
+print "%d countries added" % row_num
+
+country_table[['Total','Men', 'Women']] = country_table[['Total','Men', 'Women']].convert_objects(convert_numeric = True)
+country_table[['Men', 'Women']].describe()
+country_table[['Men', 'Women']].plot(kind = 'hist', alpha = 0.5)
