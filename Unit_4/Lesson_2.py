@@ -54,9 +54,11 @@ def prior_prob(word, word_count_ham, word_count_spam,
 
 def prior_prob_laplace(word, word_count_ham, word_count_spam, 
                        total_count_ham, total_count_spam, alpha, beta): 
-    word_count_ham += alpha
-    word_count_spam += beta
-    return word_count_ham/(total_count_ham + 1), word_count_spam/(total_count_spam + 1)
+    word_count_ham += alpha - 1
+    word_count_spam += alpha - 1
+    total_count_ham += alpha + beta - 2
+    total_count_spam += alpha + beta - 2
+    return word_count_ham/total_count_ham, word_count_spam/total_count_spam
 
 def spam_prob(email_file, email_words, alpha, beta): 
     log_given_ham, log_given_spam = 0, 0
@@ -89,8 +91,8 @@ def spam_prob(email_file, email_words, alpha, beta):
 # Optimizing and predicting
 ham_email_test = 'Canopy/Data/enron2/ham/*.txt'
 spam_email_test = 'Canopy/Data/enron2/spam/*.txt'
-for alpha_test in [0.5, 1]: 
-    for beta_test in [0.5, 1]: 
+for alpha_test in [1.1, 1.2]: 
+    for beta_test in [1.5, 2]: 
         low_p_email_ham, low_p_email_spam = 0, 0 
         log_ham_prob, log_spam_prob = 0, 0
         print "running [%.1f, %.1f]" % (alpha_test, beta_test)
