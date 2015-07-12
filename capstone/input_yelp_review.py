@@ -2,7 +2,6 @@ import json
 import numpy
 import pylab
 import pandas
-import random
 import matplotlib.pyplot as plt
 from collections import defaultdict
 from textblob import TextBlob
@@ -25,7 +24,7 @@ with open('Canopy/Data/yelp_challenge/business.json') as data_file:
             break
         business_state[business_id] = state
 
-# Generate light-weight dataframw without review text
+# Generate light-weight dataframe and review text separately
 business, user, review, rating, sentiment = [], [], [], [], []
 with open('Canopy/Data/yelp_challenge/review.json') as data_file: 
     for line in data_file: 
@@ -38,8 +37,11 @@ with open('Canopy/Data/yelp_challenge/review.json') as data_file:
                 continue
         business.append(review_data['business_id'])
         user.append(review_data['user_id'])
-        review.append(review_data['text'])
+        review.append(review_data['text'].replace('\n', ' '))
         rating.append(review_data['stars'])
+with open('Documents/Thinkful Project/yelp_text.txt', 'w') as output: 
+    for each_review in review: 
+        output.write(each_review.encode('utf8') + '\n')
 for each_review in review: 
     blob_review = TextBlob(each_review)
     sentiment.append(blob_review.sentiment)
@@ -62,7 +64,9 @@ with open('Canopy/Data/yelp_challenge/review.json') as data_file:
         print review_data['text'][0:200]
 
 # Sentiment - Rating correlation
-review.groupby('rating')['polarity'].describe()
+print review.groupby('rating')['polarity'].describe()
+print numpy.corrcoef([review['rating'], review['polarity'], review['subjectivity']])
+review['polarity'].hist(by=review['rating'], bins=20)
 review_sample = review.sample(frac=0.01)
 fig = plt.figure()
 plot = fig.add_subplot(1,1,1)
@@ -71,7 +75,6 @@ plot.scatter(review_sample['polarity'], review_sample['subjectivity'],
 plot.set_xlabel('Polarity')
 plot.set_ylabel('Subjectivity')
 plt.show()
-# Correlation Coefficient
 
 # User-Business n-n relationship
 user_review, business_review, user_business_review = \
