@@ -110,14 +110,14 @@ multiple_review = {}
 for k, v in user_business_review.iteritems(): 
     if len(v) > 1: 
         multiple_review[k] = (len(v), min(v), sum(v)/float(len(v)), max(v))
-n = 0
+""" 
+Maximum # of reviews for each user-business pair is 29
+"""
 with open('Canopy/Data/yelp_challenge/review.json') as data_file: 
     for line in data_file:
-        if n > 5: break
         review_data = json.loads(line)
         user_business = (review_data['user_id'], review_data['business_id'])
         if multiple_review.get(user_business) is not None: 
-            if multiple_review[user_business][0] > 5: 
-                n += 1
+            if multiple_review[user_business][0] > 10: 
                 print multiple_review[user_business], review_data['stars']
                 print review_data['text']
