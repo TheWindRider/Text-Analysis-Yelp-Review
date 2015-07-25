@@ -1,7 +1,6 @@
 from __future__ import division
 import re
 import math
-import random
 import pandas
 from textblob import TextBlob
 from collections import defaultdict
@@ -10,8 +9,9 @@ https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
 """
 DROP_TAG = set(['CC', 'CD', 'DT', 'EX', 'IN', 'MD', 'NNP', 'NNPS', 
                 'POS', 'PRP', 'PRP$', 'SYM', 'TO', 'UH', 'WDT', 'WP', 'WRB'])
-DROP_WORD = set(['also', 'asked', 'been', 'did', 'ever', 'get', 'have', 'had', 'just', 'make', 
-                 'not', 'said', 'then', 'told', 'very', 'was', 'were'])
+DROP_WORD = set(['also', 'anyone', 'asked', 'been', 'did', 'ever', 'get', 
+                 'have', 'had', 'just', 'make', 'next', 'not', 'only', 'recommend', 
+                 'said', 'someone', 'then', 'told', 'very', 'was', 'were'])
 review = pandas.read_csv('Documents/Thinkful Project/yelp_review.csv')
 n, num_positive, num_negative = 0, 0, 0
 sentiment_dict = defaultdict(lambda: [0,0])
@@ -61,10 +61,7 @@ with open('Documents/Thinkful Project/yelp_text.txt', 'rb') as text:
                 or word[0].lower() in DROP_WORD or len(word[0]) <= 2: continue
                 word_list.append(word[0].lower())
             word_string = ','.join(set(word_list))
-            if star >= 4 and random.random() < 0.5:   # balance number of baskets on two sides
-                word_string += ',+'
-                output.write(word_string.encode('utf8') + '\n')
-            elif star <= 2: 
-                word_string += ',-'
-                output.write(word_string.encode('utf8') + '\n')
+            if star >= 4:  word_string += ',+'
+            elif star <= 2: word_string += ',-'
+            output.write(word_string.encode('utf8') + '\n')
             n += 1
