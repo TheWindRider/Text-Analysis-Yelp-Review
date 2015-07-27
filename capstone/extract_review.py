@@ -1,5 +1,6 @@
 from __future__ import division
 import re
+import imp
 import math
 import pandas
 from textblob import TextBlob
@@ -12,11 +13,17 @@ DROP_TAG = set(['CC', 'CD', 'DT', 'EX', 'IN', 'MD', 'NNP', 'NNPS',
 DROP_WORD = set(['also', 'anyone', 'asked', 'been', 'did', 'ever', 'get', 
                  'have', 'had', 'just', 'make', 'next', 'not', 'only', 'recommend', 
                  'said', 'someone', 'then', 'told', 'very', 'was', 'were'])
-review = pandas.read_csv('Documents/Thinkful Project/yelp_review.csv')
+YELP_LKP_FILE ='Documents/Thinkful Project/thinkful course/capstone/yelp_lookup.py'
+YELP_BIZ_FILE = 'Canopy/Data/yelp_challenge/business.json'
+REVIEW_SUM_FILE = 'Documents/Thinkful Project/yelp_review.csv'
+
+lookup = imp.load_source('', YELP_LKP_FILE)
+business_info = lookup.business_dict(YELP_BIZ_FILE)
+review = pandas.read_csv(REVIEW_SUM_FILE)
+
 n, num_positive, num_negative = 0, 0, 0
 sentiment_dict = defaultdict(lambda: [0,0])
 common_words, bias_words = {}, {}
-
 # Do some word counts as next-step filters
 with open('Documents/Thinkful Project/yelp_text.txt', 'rb') as text: 
     for line in text: 
@@ -48,6 +55,7 @@ with open('Documents/Thinkful Project/yelp_text.txt', 'rb') as text:
         for line in text: 
             if n % 50000 == 0: print n
             star = review['rating'][n]
+            labels = business_info[review['business_id'][n]][1]
             if star == 3: 
                 n += 1
                 continue
@@ -60,7 +68,7 @@ with open('Documents/Thinkful Project/yelp_text.txt', 'rb') as text:
                 if word[1] in DROP_TAG or 'http' in word[0] \
                 or word[0].lower() in DROP_WORD or len(word[0]) <= 2: continue
                 word_list.append(word[0].lower())
-            word_string = ','.join(set(word_list))
+            word_string = ','.join(set(word_list)|set(labels))
             if star >= 4:  word_string += ',+'
             elif star <= 2: word_string += ',-'
             output.write(word_string.encode('utf8') + '\n')
