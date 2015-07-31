@@ -10,9 +10,9 @@ https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
 """
 DROP_TAG = set(['CC', 'CD', 'DT', 'EX', 'IN', 'MD', 'NNP', 'NNPS', 
                 'POS', 'PRP', 'PRP$', 'SYM', 'TO', 'UH', 'WDT', 'WP', 'WRB'])
-DROP_WORD = set(['also', 'anyone', 'asked', 'been', 'did', 'ever', 'get', 
-                 'have', 'had', 'just', 'make', 'next', 'not', 'only', 'recommend', 
-                 'said', 'someone', 'then', 'told', 'very', 'was', 'were'])
+DROP_WORD = set(['also', 'anyone', 'asked', 'been', 'did', 'even', 'ever', 'get', 'good', 'got', 
+                 'have', 'had', 'here', 'just', 'make', 'next', 'not', 'only', 'other', 
+                 'recommend', 'said', 'someone', 'then', 'told', 'very', 'was', 'were'])
 YELP_LKP_FILE ='Documents/Thinkful Project/thinkful course/capstone/yelp_lookup.py'
 YELP_BIZ_FILE = 'Canopy/Data/yelp_challenge/business.json'
 REVIEW_SUM_FILE = 'Documents/Thinkful Project/yelp_review.csv'
@@ -43,7 +43,7 @@ with open('Documents/Thinkful Project/yelp_text.txt', 'rb') as text:
         n += 1
 for k, v in sentiment_dict.iteritems(): 
     pos_freq, neg_freq = v[0]/num_positive, v[1]/num_negative
-    if pos_freq > 0.3 and neg_freq > 0.3 and abs(math.log(pos_freq/neg_freq)) < 0.1: 
+    if pos_freq > 0.25 and neg_freq > 0.25 and abs(math.log(pos_freq/neg_freq)) < 0.1: 
         common_words[k] = (pos_freq, neg_freq)
     if pos_freq > 0.005 and neg_freq > 0.005 and abs(math.log(pos_freq/neg_freq)) > 1: 
         bias_words[k] = (pos_freq, neg_freq)
