@@ -13,7 +13,7 @@ DROP_TAG = set(['CC', 'CD', 'DT', 'EX', 'IN', 'MD', 'NNP', 'NNPS',
 DROP_WORD = set(['also', 'anyone', 'asked', 'been', 'did', 'even', 'ever', 'get', 'good', 'got', 
                  'have', 'had', 'just', 'make', 'next', 'not', 'only', 'other', 
                  'recommend', 'said', 'someone', 'then', 'told', 'very', 'was', 'were'])
-KEY_WORD = set(['burger', 'hamburger', 'burgers', 'hamburgers'])
+KEY_WORD = set(['sushi'])
 
 YELP_LKP_FILE ='Documents/Thinkful Project/thinkful course/capstone/yelp_lookup.py'
 YELP_BIZ_FILE = 'Canopy/Data/yelp_challenge/business.json'

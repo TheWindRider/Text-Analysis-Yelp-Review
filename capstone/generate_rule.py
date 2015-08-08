@@ -5,12 +5,12 @@ import Orange
 REVIEW_FILE = 'Documents/Thinkful Project/all_review.basket'
 REVIEW_FILE = 'Documents/Thinkful Project/keyword_review.basket'
 RESULT_FILE = 'Documents/Thinkful Project/result.csv'
-ALL_SUPPORT, POS_SUPPORT, NEG_SUPPORT = 0.01, 0.015, 0.01
+ALL_SUPPORT, POS_SUPPORT, NEG_SUPPORT = 0.005, 0.01, 0.005
 
 review_data = Orange.data.Table(REVIEW_FILE)
 start_time = time.time()
 assoc_rules = Orange.associate.AssociationRulesSparseInducer(
-              review_data, support=ALL_SUPPORT, confidence=0, max_item_sets=1500000)
+              review_data, support=ALL_SUPPORT, confidence=0, max_item_sets=5000000)
 print time.time() - start_time, len(assoc_rules)
 
 def filter_rules(assoc_rules, interest): 
