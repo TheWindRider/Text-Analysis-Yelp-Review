@@ -4,6 +4,8 @@ Course Material
 ------
 Capstone Project
 ------
+[Final Report](https://docs.google.com/document/d/1OXNA7CFLSyLvNTjKNdiDfhtePnMO1lgT5B172W1L2yE/edit?usp=sharing) in Google Doc format
+
 Some original and itermediate data files are too large to be uploaded to Github. Reproducing the results entails downloading files and organizing their locations, based on the following workflow logical order: 
 
 1. review.json
